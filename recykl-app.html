@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>recyKL - Recycling Made Easy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sansita:ital,wght@0,400;0,700;0,800;0,900;1,400;1,700;1,800;1,900&family=Finger+Paint&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style-fixed.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder@2.4.0/dist/Control.Geocoder.css" />
+    
+</head>
+<body>
+    <div class="mobile-view">
+        <div class="app-container">
+            <!-- Splash Screen -->
+            <div class="screen active" id="splash">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="splash-screen">
+                    <div class="pattern-bg"></div>
+                    <div class="splash-content">
+                        <div class="logo">recy<span class="yellow">KL</span></div>
+                        <div class="logo-icon">
+                            <img src="https://i.ibb.co/FkggRzfq/image-2026-01-06-155809047-removebg-preview-1.png" alt="recyKL Logo" class="logo-image">
+                        </div>
+                    </div>
+                    <div class="splash-bottom">
+                        <button class="btn btn-primary" onclick="showScreen('signup')">SIGN UP</button>
+                        <div class="login-link">
+                            Already a user?<br>
+                            <a href="#" onclick="showScreen('login'); return false;">LOGIN</a>
+                        </div>
+                        <!-- Developer Quick Access -->
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
+                            <div style="color: rgba(255,255,255,0.5); font-size: 11px; margin-bottom: 10px; text-align: center;">Quick Access (for presentation)</div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px;">
+                                <button onclick="showScreen('home')" style="padding: 8px; border: none; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; font-size: 11px; cursor: pointer;">Home</button>
+                                <button onclick="showScreen('schedule')" style="padding: 8px; border: none; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; font-size: 11px; cursor: pointer;">Schedule</button>
+                                <button onclick="showScreen('submit')" style="padding: 8px; border: none; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; font-size: 11px; cursor: pointer;">Submit</button>
+                                <button onclick="showScreen('notifications')" style="padding: 8px; border: none; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; font-size: 11px; cursor: pointer;">Notifications</button>
+                                <button onclick="showScreen('rewards')" style="padding: 8px; border: none; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; font-size: 11px; cursor: pointer;">Rewards</button>
+                                <button onclick="showScreen('settings')" style="padding: 8px; border: none; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; font-size: 11px; cursor: pointer;">Settings</button>
+                            </div>
+                            <button onclick="clearAllData()" style="padding: 8px; border: none; border-radius: 10px; background: rgba(244, 67, 54, 0.3); color: white; font-size: 11px; cursor: pointer; width: 100%;">🗑️ Clear All Data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signup Screen -->
+            <div class="screen auth-screen" id="signup" style="background: url('https://i.ibb.co/8g6WfQpW/image-2.png') center/500px repeat;">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="auth-header">
+                    <button class="back-btn" onclick="showScreen('splash')">←</button>
+                    <div class="auth-logo">recy<span class="yellow">KL</span></div>
+                </div>
+                <div class="auth-content">
+                    <h2 class="auth-title">Create Account</h2>
+                    <form onsubmit="handleSignup(event)">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" id="signupName" placeholder="Enter your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-input" placeholder="+60 12-345 6789" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <input type="text" class="form-input" placeholder="Your address" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Zone</label>
+                            <select class="form-select" required>
+                                <option value="">Select your zone</option>
+                                <option value="zone1">Zone 1 - Cyberjaya</option>
+                                <option value="zone2">Zone 2 - Putrajaya</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-input" placeholder="Create a password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">CREATE ACCOUNT</button>
+                    </form>
+                    <div class="login-link" style="color: #1a3a2e; margin-top: 20px;">
+                        Already have an account?
+                        <a href="#" onclick="showScreen('login'); return false;" style="color: #2d5a3f;">LOGIN</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Login Screen -->
+            <div class="screen auth-screen" id="login" style="background: url('https://i.ibb.co/8g6WfQpW/image-2.png') center/500px repeat;">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="auth-header">
+                    <button class="back-btn" onclick="showScreen('splash')">←</button>
+                    <div class="auth-logo">recy<span class="yellow">KL</span></div>
+                </div>
+                <div class="auth-content">
+                    <h2 class="auth-title">Welcome Back!</h2>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-input" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">LOGIN</button>
+                    </form>
+                    <div class="login-link" style="color: #1a3a2e; margin-top: 20px;">
+                        Don't have an account?
+                        <a href="#" onclick="showScreen('signup'); return false;" style="color: #2d5a3f;">SIGN UP</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Home Dashboard -->
+            <div class="screen" id="home">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="app-header">
+                    <div class="app-logo">recy<span class="yellow">KL</span></div>
+                    <div class="user-badge">
+                        <div class="user-info">
+                        <span class="user-name">Test</span>
+                        <span class="points-badge">2530 pts</span>
+                        </div>
+                        <div class="user-avatar">👤</div>
+                    </div>
+                </div>
+                <div class="main-content">
+                    <div class="welcome-card" id="welcomeMessage">Welcome back, Test!</div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon">🔥</div>
+                            <div class="stat-value">5 DAYS</div>
+                            <div class="stat-label">Streak</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">🗑️</div>
+                            <div class="stat-value">~4 KGS</div>
+                            <div class="stat-label">Waste Disposed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">🚚</div>
+                            <div class="stat-value">12 Pickups</div>
+                            <div class="stat-label">Pickups Done</div>
+                        </div>
+                    </div>
+
+                    <div class="action-grid">
+                        <button class="action-item" onclick="showScreen('schedule')">
+                            <div class="action-icon">📅</div>
+                            <div class="action-label">Schedule<br>Pickup</div>
+                        </button>
+                        <button class="action-item" onclick="showScreen('submit')">
+                            <div class="action-icon">🗒️</div>
+                            <div class="action-label">Submit Log</div>
+                        </button>
+                        <button class="action-item" onclick="showScreen('rewards')">
+                            <div class="action-icon">🎁</div>
+                            <div class="action-label">Rewards</div>
+                        </button>
+                    </div>
+
+                    <!-- [UPDATED] CHANGED: Added IDs to pickup card for dynamic updates -->
+                    <div class="pickup-card" id="pickupCard">
+                        <!-- [UPDATED] CHANGED: Added navigation arrows to browse through multiple scheduled pickups -->
+                        <div class="pickup-header">
+                            <span>Scheduled Pickup</span>
+                            <div class="pickup-nav" id="pickupNav" style="display: none;">
+                                <button class="pickup-nav-btn" onclick="navigatePickup(-1)">‹</button>
+                                <span class="pickup-counter" id="pickupCounter">1 / 1</span>
+                                <button class="pickup-nav-btn" onclick="navigatePickup(1)">›</button>
+                            </div>
+                        </div>
+                        <div class="pickup-info">
+                            <div class="pickup-icon">🚚</div>
+                            <div class="pickup-time">
+                                <!-- [UPDATED] CHANGED: Added IDs for dynamic time/date/location/ETA updates -->
+                                <div class="pickup-time-value" id="nextPickupTime">No upcoming pickups</div>
+                                <div class="pickup-date" id="nextPickupDate"></div>
+                                <div class="pickup-location" id="nextPickupLocation"></div>
+                                <div class="pickup-eta" id="nextPickupEta"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <button class="nav-item active" onclick="showScreen('home')">
+                        <div class="nav-icon">🏠</div>
+                        <div class="nav-label">Home</div>
+                    </button>
+                    <button class="nav-item" onclick="showScreen('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Notifications</div>
+                    </button>
+                    <button class="nav-item" onclick="showScreen('settings')">
+                        <div class="nav-icon">⚙️</div>
+                        <div class="nav-label">Settings</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Schedule Pickup Screen -->
+            <div class="screen" id="schedule">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="app-header">
+                    <div class="app-logo">recy<span class="yellow">KL</span></div>
+                    <div class="user-badge">
+                        <div class="user-info">
+                        <span class="user-name">Test</span>
+                        <span class="points-badge">2530 pts</span>
+                        </div>
+                        <div class="user-avatar">👤</div>
+                    </div>
+                </div>
+                <div class="schedule-content">
+                    <div class="schedule-header">SCHEDULE PICKUP</div>
+                    
+                    <!-- [UPDATED] CHANGED: Dynamic calendar that updates based on current date -->
+                    <div class="calendar-section">
+                        <div class="date-header">
+                            <div class="date-current" id="selectedDateDisplay">Select a date</div>
+                            <div class="date-nav">
+                                <!-- [UPDATED] CHANGED: Added onclick handlers for week navigation -->
+                                <button onclick="navigateWeek(-1)">‹</button>
+                                <button onclick="navigateWeek(1)">›</button>
+                            </div>
+                        </div>
+                        <!-- [UPDATED] CHANGED: Calendar grid will be populated dynamically by renderCalendar() -->
+                        <div class="calendar-grid" id="calendarGrid">
+                            <!-- Days of week labels -->
+                            <div class="calendar-day label">M</div>
+                            <div class="calendar-day label">T</div>
+                            <div class="calendar-day label">W</div>
+                            <div class="calendar-day label">T</div>
+                            <div class="calendar-day label">F</div>
+                            <div class="calendar-day label">S</div>
+                            <div class="calendar-day label">S</div>
+                            <!-- Date buttons will be inserted here by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="section-title">Pickup Times</div>
+                    <div class="time-grid">
+                        <button class="time-slot" onclick="selectTime('8:00 AM')">8:00 am</button>
+                        <button class="time-slot" onclick="selectTime('9:00 AM')">9:00 am</button>
+                        <button class="time-slot" onclick="selectTime('11:00 AM')">11:00 am</button>
+                        <button class="time-slot" onclick="selectTime('1:00 PM')">1:00 pm</button>
+                        <button class="time-slot active" onclick="selectTime('4:00 PM')">4:00 pm</button>
+                        <button class="time-slot" onclick="selectTime('5:00 PM')">5:00 pm</button>
+                    </div>
+
+                    <div class="section-title">Location</div>
+                    <div class="location-section">
+                        <input type="text" class="search-box" id="locationSearch" placeholder="🔍 Search for location">
+                        <div id="map" class="map-container"></div>
+                    </div>
+
+                    <button class="btn btn-submit" style="margin: 0 auto 20px auto; display: block; width: calc(100% - 40px);" onclick="confirmPickup()">CONFIRM</button>
+                </div>
+                
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="showScreen('home')">
+                        <div class="nav-icon">🏠</div>
+                        <div class="nav-label">Home</div>
+                    </button>
+                    <button class="nav-item" onclick="showScreen('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Notifications</div>
+                    </button>
+                    <button class="nav-item" onclick="showScreen('settings')">
+                        <div class="nav-icon">⚙️</div>
+                        <div class="nav-label">Settings</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Submit Log Screen -->
+            <div class="screen" id="submit">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="app-header">
+                    <div class="app-logo">recy<span class="yellow">KL</span></div>
+                    <div class="user-badge">
+                        <div class="user-info">
+                        <span class="user-name">Test</span>
+                        <span class="points-badge">2530 pts</span>
+                        </div>
+                        <div class="user-avatar">👤</div>
+                    </div>
+                </div>
+                <div class="main-content">
+                    <div class="schedule-header">SUBMIT LOG</div>
+                    
+                    <div class="submit-card">
+                        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                            <div class="upload-icon">🖼️</div>
+                            <div class="upload-text">Upload Image/Take Photo</div>
+                            <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Pickup Date:</label>
+                            <div style="font-size: 13px; color: #666; margin-bottom: 8px;">Select scheduled pickup</div>
+                            <select class="form-select" id="pickupSelect">
+                                <option value="">Select a pickup</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Material Type:</label>
+                            <div style="font-size: 13px; color: #666; margin-bottom: 8px;">Select the waste material</div>
+                            <select class="form-select" id="materialSelect">
+                                <option value="">Select a material</option>
+                                <option value="plastic">Plastic</option>
+                                <option value="paper">Paper/Cardboard</option>
+                                <option value="metal">Metal/Aluminum</option>
+                                <option value="glass">Glass</option>
+                                <option value="organic">Organic Waste</option>
+                                <option value="electronics">Electronics</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Weight:</label>
+                            <div style="font-size: 13px; color: #666; margin-bottom: 8px;">Enter the weight of your waste bag</div>
+                            <div class="weight-input-group">
+                                <input type="number" class="form-input" id="weightInput" placeholder="~ kg" step="0.1" min="0">
+                                <div class="weight-unit">KG</div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-submit" onclick="submitLog()">SUBMIT REPORT</button>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="showScreen('home')">
+                        <div class="nav-icon">🏠</div>
+                        <div class="nav-label">Home</div>
+                    </button>
+                    <button class="nav-item" onclick="showScreen('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Notifications</div>
+                    </button>
+                    <button class="nav-item" onclick="showScreen('settings')">
+                        <div class="nav-icon">⚙️</div>
+                        <div class="nav-label">Settings</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notifications Screen -->
+            <div class="screen" id="notifications">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="notif-header">Notifications</div>
+                <div class="notif-filters">
+                    <button class="filter-btn active" onclick="filterNotifications('all')">All</button>
+                    <button class="filter-btn" onclick="filterNotifications('unread')">Unread</button>
+                    <button class="filter-btn" onclick="filterNotifications('reminders')">Reminders</button>
+                </div>
+                <div class="notif-list">
+                    <div class="notif-banner" id="rewardsBanner" onclick="claimRewards()">
+                        <div class="banner-icon">🎁</div>
+                        <div class="banner-content">
+                            <div class="banner-title">Rewards</div>
+                            <div class="banner-subtitle" id="rewardsText">Tap to collect your points!</div>
+                        </div>
+                    </div>
+
+                    <!-- [UPDATED] CHANGED: Added ID to pickup notification for dynamic updates -->
+                    <div class="notif-item" data-category="unread" id="pickupNotification">
+                        <div class="notif-item-icon">🚀</div>
+                        <div class="notif-item-content">
+                            <!-- [UPDATED] CHANGED: These will be updated dynamically based on earliest pickup -->
+                            <div class="notif-item-title" id="notifTitle">ON THE WAY - Recycling Collection</div>
+                            <div class="notif-item-text" id="notifText">Pickup arriving in 1hr 30 mins (22 km away)</div>
+                        </div>
+                        <div class="notif-time" id="notifTime">Just Now</div>
+                        <div class="unread-dot"></div>
+                    </div>
+
+                    <div class="notif-item" data-category="unread">
+                        <div class="notif-item-icon">✅</div>
+                        <div class="notif-item-content">
+                            <div class="notif-item-title">COMPLETED - Recycling Collection</div>
+                            <div class="notif-item-text">Collected yesterday at 1:06 pm</div>
+                        </div>
+                        <div class="notif-time">1d</div>
+                        <div class="unread-dot"></div>
+                    </div>
+
+                    <div class="notif-item" data-category="all">
+                        <div class="notif-item-icon">✅</div>
+                        <div class="notif-item-content">
+                            <div class="notif-item-title">COMPLETED - Recycling Collection</div>
+                            <div class="notif-item-text">Collected Tuesday at 1:14 pm</div>
+                        </div>
+                        <div class="notif-time">2d</div>
+                    </div>
+
+                    <div class="notif-item" data-category="all">
+                        <div class="notif-item-icon">✅</div>
+                        <div class="notif-item-content">
+                            <div class="notif-item-title">COMPLETED - Recycling Collection</div>
+                            <div class="notif-item-text">Collected 3 days ago at 4:09 pm</div>
+                        </div>
+                        <div class="notif-time">3d</div>
+                    </div>
+
+                    <div class="notif-item" data-category="reminders">
+                        <div class="notif-item-icon">⏰</div>
+                        <div class="notif-item-content">
+                            <div class="notif-item-title">REMINDER - Schedule Your Next Pickup</div>
+                            <div class="notif-item-text">Don't forget to schedule your weekly pickup!</div>
+                        </div>
+                        <div class="notif-time">5d</div>
+                    </div>
+
+                    <div class="notif-item" data-category="all">
+                        <div class="notif-item-icon">✅</div>
+                        <div class="notif-item-content">
+                            <div class="notif-item-title">COMPLETED - Recycling Collection</div>
+                            <div class="notif-item-text">Collected 6 days ago at 11:10 am</div>
+                        </div>
+                        <div class="notif-time">6d</div>
+                    </div>
+
+                    <div class="notif-item" data-category="all">
+                        <div class="notif-item-icon">✅</div>
+                        <div class="notif-item-content">
+                            <div class="notif-item-title">COMPLETED - Recycling Collection</div>
+                            <div class="notif-item-text">Collected 7 days ago at 09:04 am</div>
+                        </div>
+                        <div class="notif-time">7d</div>
+                    </div>
+
+                    <div class="notif-item" data-category="reminders">
+                        <div class="notif-item-icon">💡</div>
+                        <div class="notif-item-content">
+                            <div class="notif-item-title">TIP - Recycling Best Practices</div>
+                            <div class="notif-item-text">Remember to rinse containers before recycling!</div>
+                        </div>
+                        <div class="notif-time">8d</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="showScreen('home')">
+                        <div class="nav-icon">🏠</div>
+                        <div class="nav-label">Home</div>
+                    </button>
+                    <button class="nav-item active" onclick="showScreen('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Notifications</div>
+                    </button>
+                    <button class="nav-item" onclick="showScreen('settings')">
+                        <div class="nav-icon">⚙️</div>
+                        <div class="nav-label">Settings</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Rewards Screen -->
+            <div class="screen" id="rewards">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="app-header">
+                    <div class="app-logo">recy<span class="yellow">KL</span></div>
+                    <div class="user-badge">
+                        <div class="user-info">
+                        <span class="user-name">Test</span>
+                        <span class="points-badge">2530 pts</span>
+                        </div>
+                        <div class="user-avatar">👤</div>
+                    </div>
+                </div>
+                <div class="rewards-hero">
+                    <img src="https://i.ibb.co/350t3TqD/image-31.png" alt="Treasure Chest" class="treasure-chest">
+                    <div class="rewards-title">Rewards</div>
+                </div>
+                <div class="rewards-filters">
+                    <button class="filter-btn active" onclick="filterRewards('all')">All</button>
+                    <button class="filter-btn" onclick="filterRewards('food')">Food</button>
+                    <button class="filter-btn" onclick="filterRewards('fashion')">Fashion</button>
+                    <button class="filter-btn" onclick="filterRewards('travel')">Travel</button>
+                </div>
+                <div class="rewards-grid">
+                    <div class="reward-card" data-reward-id="starbucks" data-points="200" data-category="food" onclick="redeemReward('starbucks', 200, 'Starbucks')">
+                        <div class="reward-top">
+                            <div class="reward-image" style="background: linear-gradient(135deg, #00796B 0%, #004D40 100%);">
+                                ☕
+                            </div>
+                        </div>
+                        <div class="reward-bottom">
+                            <div class="reward-header">
+                                <div class="reward-brand">Starbucks</div>
+                                <div class="reward-points">200 pts</div>
+                            </div>
+                            <div class="reward-desc">Rm 20 for any 2 GRANDE-SIZED FRAPPUCCINO BLENDED beverages</div>
+                        </div>
+                    </div>
+
+                    <div class="reward-card" data-reward-id="pizzahut" data-points="620" data-category="food" onclick="redeemReward('pizzahut', 620, 'PizzaHut')">
+                        <div class="reward-top">
+                            <div class="reward-image" style="background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);">
+                                🍕
+                            </div>
+                        </div>
+                        <div class="reward-bottom">
+                            <div class="reward-header">
+                                <div class="reward-brand">PizzaHut</div>
+                                <div class="reward-points">620 pts</div>
+                            </div>
+                            <div class="reward-desc">Buy 1 and get 2nd MED H.B.S BOX at 50% OFF!</div>
+                        </div>
+                    </div>
+
+                    <div class="reward-card" data-reward-id="aldo" data-points="1200" data-category="fashion" onclick="redeemReward('aldo', 1200, 'ALDO')">
+                        <div class="reward-top">
+                            <div class="reward-image" style="background: linear-gradient(135deg, #c2185b 0%, #880e4f 100%);">
+                                👟
+                            </div>
+                        </div>
+                        <div class="reward-bottom">
+                            <div class="reward-header">
+                                <div class="reward-brand">ALDO</div>
+                                <div class="reward-points">1200 pts</div>
+                            </div>
+                            <div class="reward-desc">BUY MORE SAVE MORE on selected items</div>
+                        </div>
+                    </div>
+
+                    <div class="reward-card" data-reward-id="tripcom" data-points="800" data-category="travel" onclick="redeemReward('tripcom', 800, 'Trip.com')">
+                        <div class="reward-top">
+                            <div class="reward-image" style="background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);">
+                                ✈️
+                            </div>
+                        </div>
+                        <div class="reward-bottom">
+                            <div class="reward-header">
+                                <div class="reward-brand">Trip.com</div>
+                                <div class="reward-points">800 pts</div>
+                            </div>
+                            <div class="reward-desc">Up to 50% OFF on hotels worldwide</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="showScreen('home')">
+                        <div class="nav-icon">🏠</div>
+                        <div class="nav-label">Home</div>
+                    </button>
+                    <button class="nav-item" onclick="showScreen('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Notifications</div>
+                    </button>
+                    <button class="nav-item" onclick="showScreen('settings')">
+                        <div class="nav-icon">⚙️</div>
+                        <div class="nav-label">Settings</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Settings Screen -->
+            <div class="screen" id="settings">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <div class="status-icons">
+                        <span>📶</span>
+                        <span>📡</span>
+                        <span>🔋</span>
+                    </div>
+                </div>
+                <div class="app-header">
+                    <div class="app-logo">recy<span class="yellow">KL</span></div>
+                    <div class="user-badge">
+                        <div class="user-info">
+                        <span class="user-name" id="displayUserName">Methum</span>
+                        <span class="points-badge">2530 pts</span>
+                        </div>
+                        <div class="user-avatar" id="headerAvatar">👤</div>
+                    </div>
+                </div>
+                <div class="settings-content">
+                    <div class="settings-header">Settings</div>
+                    
+                    <div class="settings-card">
+                        <div class="settings-section">
+                            <h3 class="settings-section-title">Profile Picture</h3>
+                            <div class="avatar-selector">
+                                <div class="current-avatar">
+                                    <div class="avatar-preview" id="avatarPreview">👤</div>
+                                    <div class="avatar-label">Current Avatar</div>
+                                </div>
+                                <div class="avatar-grid">
+                                    <button class="avatar-option" onclick="selectAvatar('👤')" data-avatar="👤">👤</button>
+                                    <button class="avatar-option" onclick="selectAvatar('😊')" data-avatar="😊">😊</button>
+                                    <button class="avatar-option active" onclick="selectAvatar('🌟')" data-avatar="🌟">🌟</button>
+                                    <button class="avatar-option" onclick="selectAvatar('🌿')" data-avatar="🌿">🌿</button>
+                                    <button class="avatar-option" onclick="selectAvatar('♻️')" data-avatar="♻️">♻️</button>
+                                    <button class="avatar-option" onclick="selectAvatar('🌍')" data-avatar="🌍">🌍</button>
+                                    <button class="avatar-option" onclick="selectAvatar('💚')" data-avatar="💚">💚</button>
+                                    <button class="avatar-option" onclick="selectAvatar('🐻')" data-avatar="🐻">🐻</button>
+                                    <button class="avatar-option" onclick="selectAvatar('🦊')" data-avatar="🦊">🦊</button>
+                                    <button class="avatar-option" onclick="selectAvatar('🐼')" data-avatar="🐼">🐼</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3 class="settings-section-title">Personal Information</h3>
+                            <form onsubmit="saveSettings(event)">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-input" id="settingsName" value="Test" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-input" id="settingsEmail" value="methum@example.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-input" id="settingsPhone" value="+60 12-345 6789" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Address</label>
+                                    <input type="text" class="form-input" id="settingsAddress" value="123 Green Street, KL" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Zone</label>
+                                    <select class="form-select" id="settingsZone" required>
+                                        <option value="zone1" selected>Zone 1 - Cyberjaya</option>
+                                        <option value="zone2">Zone 2 - Putrajaya</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">New Password (leave blank to keep current)</label>
+                                    <input type="password" class="form-input" id="settingsPassword" placeholder="Enter new password">
+                                </div>
+                                <button type="submit" class="btn btn-primary">SAVE CHANGES</button>
+                            </form>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3 class="settings-section-title">App Preferences</h3>
+                            <div class="preference-item">
+                                <div class="preference-info">
+                                    <div class="preference-title">Push Notifications</div>
+                                    <div class="preference-desc">Get notified about pickups</div>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="preference-item">
+                                <div class="preference-info">
+                                    <div class="preference-title">Email Updates</div>
+                                    <div class="preference-desc">Receive weekly summaries</div>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="preference-item">
+                                <div class="preference-info">
+                                    <div class="preference-title">Reminders</div>
+                                    <div class="preference-desc">Remind me to recycle</div>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <button class="btn" style="background: #f44336; color: white; width: 100%; margin-bottom: 10px;" onclick="clearAllData()">🗑️ CLEAR ALL DATA</button>
+                            <button class="btn-logout" onclick="logout()">LOGOUT</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <button class="nav-item" onclick="showScreen('home')">
+                        <div class="nav-icon">🏠</div>
+                        <div class="nav-label">Home</div>
+                    </button>
+                    <button class="nav-item" onclick="showScreen('notifications')">
+                        <div class="nav-icon">🔔</div>
+                        <div class="nav-label">Notifications</div>
+                    </button>
+                    <button class="nav-item active" onclick="showScreen('settings')">
+                        <div class="nav-icon">⚙️</div>
+                        <div class="nav-label">Settings</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Screen navigation
+        let mapInitialized = false; // Track if map has been initialized
+        
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // [UPDATED] CHANGED: Update pickup card and user name when showing home screen
+            if (screenId === 'home') {
+                updateUserNameDisplay();
+                updateNextPickupCard(); // Update pickup card with latest data
+            }
+
+            // [UPDATED] CHANGED: Update pickup notification when showing notifications screen
+            if (screenId === 'notifications') {
+                updatePickupNotification();
+            }
+
+            // Load scheduled pickups when submit screen is shown
+            if (screenId === 'submit') {
+                loadScheduledPickups();
+            }
+
+            // Load redeemed rewards when rewards screen is shown
+            if (screenId === 'rewards') {
+                loadRedeemedRewards();
+            }
+
+            // Load current user name into settings form
+            if (screenId === 'settings') {
+                const settingsNameInput = document.getElementById('settingsName');
+                if (settingsNameInput) {
+                    settingsNameInput.value = currentUserName;
+                }
+            }
+
+            // [UPDATED] CHANGED: Initialize map and render calendar when schedule screen is shown
+            if (screenId === 'schedule') {
+                if (!mapInitialized) {
+                    setTimeout(function() {
+                        initMap();
+                        mapInitialized = true;
+                    }, 100);
+                }
+                // Render calendar every time schedule screen is shown
+                renderCalendar();
+            }
+        }
+
+        // Form handlers
+        // User name management
+        let currentUserName = 'Test'; // Default for quick access
+
+        function handleSignup(event) {
+            event.preventDefault();
+            
+            // Get the full name from the form
+            const fullName = document.getElementById('signupName').value;
+            
+            // Extract first name (everything before first space)
+            const firstName = fullName.split(' ')[0];
+            
+            // Set as current user
+            currentUserName = firstName;
+            
+            // Update all user name displays
+            updateUserNameDisplay();
+            
+            alert('Account created successfully! Welcome to recyKL, ' + firstName + '!');
+            showScreen('home');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            // For demo purposes, we'll simulate login with a name
+            // In production, this would come from backend authentication
+            const demoName = prompt('Enter your first name for this demo session:', 'John');
+            
+            if (demoName && demoName.trim() !== '') {
+                currentUserName = demoName.trim();
+                updateUserNameDisplay();
+                alert('Welcome back, ' + currentUserName + '!');
+                showScreen('home');
+            } else {
+                currentUserName = 'User';
+                updateUserNameDisplay();
+                alert('Welcome back!');
+                showScreen('home');
+            }
+        }
+        
+        function updateUserNameDisplay() {
+            // Update all instances of user name
+            document.querySelectorAll('.user-name').forEach(nameEl => {
+                nameEl.textContent = currentUserName;
+            });
+            
+            // Update welcome message on home screen
+            const welcomeMsg = document.getElementById('welcomeMessage');
+            if (welcomeMsg) {
+                welcomeMsg.textContent = 'Welcome back, ' + currentUserName + '!';
+            }
+        }
+
+        // ========================================
+        // [UPDATED] CHANGED: Dynamic Calendar System
+        // ========================================
+        
+        // Calendar state variables
+        let currentWeekOffset = 0; // Track which week we're viewing (0 = current week)
+        let selectedPickupDate = null; // Will store full Date object
+        let selectedPickupTime = '4:00 PM';
+        let selectedLocation = '';
+        
+        // Get today's date (Feb 5, 2026 for now)
+        function getTodayDate() {
+            return new Date('2026-02-05'); // Current date
+        }
+        
+        // Get the start of week (Monday) for a given date
+        function getWeekStart(date) {
+            const d = new Date(date);
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust to Monday
+            return new Date(d.setDate(diff));
+        }
+        
+        // Check if a date is selectable (future Mon-Sat only)
+        function isDateSelectable(date) {
+            const today = getTodayDate();
+            const isSunday = date.getDay() === 0;
+            const isPastOrToday = date <= today;
+            
+            // RULE: Can only select future dates (not today, not past) and not Sundays
+            return !isSunday && !isPastOrToday;
+        }
+        
+        // Format date for display (e.g., "7 February")
+        function formatDateDisplay(date) {
+            const day = date.getDate();
+            const month = date.toLocaleString('en-US', { month: 'long' });
+            return `${day} ${month}`;
+        }
+        
+        // Render the calendar for current week
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const today = getTodayDate();
+            
+            // Calculate week start based on offset
+            const baseWeekStart = getWeekStart(today);
+            const weekStart = new Date(baseWeekStart);
+            weekStart.setDate(baseWeekStart.getDate() + (currentWeekOffset * 7));
+            
+            // Remove existing date buttons (keep day labels)
+            const existingButtons = grid.querySelectorAll('button');
+            existingButtons.forEach(btn => btn.remove());
+            
+            // Generate 7 days (Mon-Sun)
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(weekStart);
+                date.setDate(weekStart.getDate() + i);
+                
+                const button = document.createElement('button');
+                button.className = 'calendar-day';
+                button.textContent = date.getDate();
+                
+                // Check if this date is selectable
+                const selectable = isDateSelectable(date);
+                
+                if (!selectable) {
+                    // DISABLED: Past dates, today, or Sunday - gray out and disable
+                    button.classList.add('disabled');
+                    button.disabled = true;
+                } else {
+                    // ENABLED: Future Mon-Sat dates - clickable
+                    button.onclick = function() {
+                        selectDate(date);
+                    };
+                }
+                
+                // If this date is currently selected, highlight it
+                if (selectedPickupDate && 
+                    date.toDateString() === selectedPickupDate.toDateString()) {
+                    button.classList.add('active');
+                    console.log('Adding active to date:', date.toDateString());
+                }
+                
+                grid.appendChild(button);
+            }
+        }
+        
+        // Navigate between weeks
+        function navigateWeek(direction) {
+            currentWeekOffset += direction;
+            renderCalendar();
+        }
+        
+        // Select a date from calendar
+        function selectDate(date) {
+            console.log('selectDate called with:', date);
+            selectedPickupDate = date;
+            console.log('selectedPickupDate set to:', selectedPickupDate.toDateString());
+            
+            // Update display at top
+            document.getElementById('selectedDateDisplay').textContent = formatDateDisplay(date);
+            
+            // Re-render calendar to update active state
+            renderCalendar();
+        }
+
+        function selectTime(time) {
+            selectedPickupTime = time;
+            // Remove active class from all time slots
+            document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('active'));
+            // Add active to clicked time
+            event.target.classList.add('active');
+        }
+
+        function confirmPickup() {
+            // [UPDATED] CHANGED: Validate that a date has been selected
+            if (!selectedPickupDate) {
+                alert('Please select a pickup date from the calendar!');
+                return;
+            }
+            
+            // Get the current marker position
+            let locationName = document.getElementById('locationSearch').value;
+            let lat = 3.1390; // Default Kuala Lumpur
+            let lng = 101.6869;
+            
+            // If marker exists and has been moved, use its position
+            if (marker) {
+                const position = marker.getLatLng();
+                lat = position.lat;
+                lng = position.lng;
+            }
+            
+            // If no location name entered, use coordinates as description
+            if (!locationName || locationName.trim() === '') {
+                locationName = `Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+            }
+            
+            // [UPDATED] CHANGED: Create pickup object with full date/time information for accurate ETA
+            const pickup = {
+                id: Date.now(),
+                date: selectedPickupDate.toISOString(), // Full ISO date for sorting
+                dateDisplay: formatDateDisplay(selectedPickupDate), // For display (e.g., "7 February")
+                time: selectedPickupTime,
+                location: locationName,
+                latitude: lat,
+                longitude: lng,
+                timestamp: new Date().toISOString()
+            };
+
+            // Get existing pickups from localStorage
+            let pickups = JSON.parse(localStorage.getItem('scheduledPickups') || '[]');
+            
+            // Add new pickup
+            pickups.push(pickup);
+            
+            // Save to localStorage
+            localStorage.setItem('scheduledPickups', JSON.stringify(pickups));
+            
+            // [UPDATED] CHANGED: Update the next pickup card immediately
+            updateNextPickupCard();
+            updatePickupNotification(); // [UPDATED] CHANGED: Also update notification
+            
+            alert('Pickup confirmed for ' + selectedPickupTime + ' on ' + formatDateDisplay(selectedPickupDate) + '!\nLocation: ' + locationName);
+            showScreen('home');
+        }
+        
+        // ========================================
+        // [UPDATED] CHANGED: New Pickup Card Update System with Navigation
+        // ========================================
+        
+        let currentPickupIndex = 0; // [UPDATED] CHANGED: Track which pickup we're viewing
+        let sortedPickups = []; // [UPDATED] CHANGED: Store sorted pickups for navigation
+        
+        // [UPDATED] CHANGED: Update the pickup card on home screen with ability to navigate between pickups
+        function updateNextPickupCard() {
+            const pickups = JSON.parse(localStorage.getItem('scheduledPickups') || '[]');
+            
+            if (pickups.length === 0) {
+                // No pickups scheduled
+                document.getElementById('nextPickupTime').textContent = 'No upcoming pickups';
+                document.getElementById('nextPickupDate').textContent = '';
+                document.getElementById('nextPickupLocation').textContent = '';
+                document.getElementById('nextPickupEta').textContent = '';
+                document.getElementById('pickupNav').style.display = 'none'; // Hide navigation
+                return;
+            }
+            
+            // [UPDATED] CHANGED: Sort all pickups by date/time (earliest first)
+            sortedPickups = pickups.map(pickup => {
+                const pickupDate = new Date(pickup.date);
+                const [time, period] = pickup.time.split(' ');
+                let [hours, minutes] = time.split(':').map(Number);
+                
+                // Convert to 24-hour format
+                if (period === 'PM' && hours !== 12) hours += 12;
+                if (period === 'AM' && hours === 12) hours = 0;
+                
+                pickupDate.setHours(hours, minutes, 0, 0);
+                
+                return {
+                    ...pickup,
+                    dateTime: pickupDate
+                };
+            }).sort((a, b) => a.dateTime - b.dateTime);
+            
+            // [UPDATED] CHANGED: Reset to first pickup if index is out of bounds
+            if (currentPickupIndex >= sortedPickups.length) {
+                currentPickupIndex = 0;
+            }
+            
+            // [UPDATED] CHANGED: Get current pickup to display
+            const currentPickup = sortedPickups[currentPickupIndex];
+            
+            // Update card elements
+            document.getElementById('nextPickupTime').textContent = currentPickup.time;
+            document.getElementById('nextPickupDate').textContent = currentPickup.dateDisplay;
+            document.getElementById('nextPickupLocation').textContent = currentPickup.location;
+            
+            // [UPDATED] CHANGED: Show/hide navigation arrows based on number of pickups
+            if (sortedPickups.length > 1) {
+                document.getElementById('pickupNav').style.display = 'flex';
+                document.getElementById('pickupCounter').textContent = `${currentPickupIndex + 1} / ${sortedPickups.length}`;
+            } else {
+                document.getElementById('pickupNav').style.display = 'none';
+            }
+            
+            // Calculate and display ETA
+            updateETA(currentPickup.dateTime);
+        }
+        
+        // [UPDATED] CHANGED: Navigate between pickups (direction: -1 for previous, 1 for next)
+        function navigatePickup(direction) {
+            if (sortedPickups.length === 0) return;
+            
+            // Update index with wrapping (cycle through pickups)
+            currentPickupIndex += direction;
+            
+            // Wrap around if needed
+            if (currentPickupIndex < 0) {
+                currentPickupIndex = sortedPickups.length - 1;
+            } else if (currentPickupIndex >= sortedPickups.length) {
+                currentPickupIndex = 0;
+            }
+            
+            // Update display
+            updateNextPickupCard();
+        }
+        
+        // Calculate ETA to pickup time
+        function updateETA(pickupDateTime) {
+            const now = getTodayDate(); // Use current date/time
+            const diffMs = pickupDateTime - now;
+            
+            if (diffMs <= 0) {
+                document.getElementById('nextPickupEta').textContent = 'Pickup time passed';
+                return;
+            }
+            
+            // Convert milliseconds to readable format
+            const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            
+            let etaText = 'ETA: ';
+            if (days > 0) {
+                etaText += `${days} day${days > 1 ? 's' : ''} `;
+            }
+            if (hours > 0) {
+                etaText += `${hours} hr${hours > 1 ? 's' : ''} `;
+            }
+            if (minutes > 0 && days === 0) {
+                etaText += `${minutes} min`;
+            }
+            
+            document.getElementById('nextPickupEta').textContent = etaText.trim();
+        }
+        
+        // [UPDATED] CHANGED: New function to update pickup notification
+        function updatePickupNotification() {
+            const pickups = JSON.parse(localStorage.getItem('scheduledPickups') || '[]');
+            
+            if (pickups.length === 0) {
+                // Hide notification if no pickups
+                const notif = document.getElementById('pickupNotification');
+                if (notif) notif.style.display = 'none';
+                return;
+            }
+            
+            // Get earliest pickup (same sorting as pickup card)
+            const sortedPickups = pickups.map(pickup => {
+                const pickupDate = new Date(pickup.date);
+                const [time, period] = pickup.time.split(' ');
+                let [hours, minutes] = time.split(':').map(Number);
+                
+                if (period === 'PM' && hours !== 12) hours += 12;
+                if (period === 'AM' && hours === 12) hours = 0;
+                
+                pickupDate.setHours(hours, minutes, 0, 0);
+                
+                return {
+                    ...pickup,
+                    dateTime: pickupDate
+                };
+            }).sort((a, b) => a.dateTime - b.dateTime);
+            
+            const earliestPickup = sortedPickups[0];
+            const now = getTodayDate();
+            const diffMs = earliestPickup.dateTime - now;
+            
+            if (diffMs <= 0) {
+                // Pickup time has passed
+                document.getElementById('notifTitle').textContent = 'COMPLETED - Recycling Collection';
+                document.getElementById('notifText').textContent = 'Pickup time has passed';
+                document.getElementById('notifTime').textContent = 'Past';
+                return;
+            }
+            
+            // Calculate ETA for notification
+            const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            
+            // Format ETA text (e.g., "1hr 30 mins" or "2 days 3 hrs")
+            let etaText = 'Pickup arriving in ';
+            if (days > 0) {
+                etaText += `${days} day${days > 1 ? 's' : ''} `;
+            }
+            if (hours > 0) {
+                etaText += `${hours}hr${hours > 1 ? 's' : ''} `;
+            }
+            if (minutes > 0 && days === 0) {
+                etaText += `${minutes} min${minutes > 1 ? 's' : ''}`;
+            }
+            etaText += ' (22 km away)'; // Keep default distance
+            
+            // Format time ago text
+            let timeAgoText = 'Just Now';
+            if (days > 0) {
+                timeAgoText = `${days}d`;
+            } else if (hours > 0) {
+                timeAgoText = `${hours}h`;
+            } else if (minutes > 0) {
+                timeAgoText = `${minutes}m`;
+            }
+            
+            // Update notification
+            document.getElementById('notifTitle').textContent = 'ON THE WAY - Recycling Collection';
+            document.getElementById('notifText').textContent = etaText.trim();
+            document.getElementById('notifTime').textContent = timeAgoText;
+            
+            // Show notification
+            const notif = document.getElementById('pickupNotification');
+            if (notif) notif.style.display = 'flex';
+        }
+        
+        // Update ETA every minute
+        setInterval(function() {
+            const pickups = JSON.parse(localStorage.getItem('scheduledPickups') || '[]');
+            if (pickups.length > 0) {
+                updateNextPickupCard();
+                updatePickupNotification(); // [UPDATED] CHANGED: Also update notification
+            }
+        }, 60000); // Update every 60 seconds
+        
+
+        // Load scheduled pickups into the dropdown
+        function loadScheduledPickups() {
+            const pickupSelect = document.getElementById('pickupSelect');
+            const pickups = JSON.parse(localStorage.getItem('scheduledPickups') || '[]');
+            
+            // Clear existing options except the first one
+            pickupSelect.innerHTML = '<option value="">Select a pickup</option>';
+            
+            // Add pickups to dropdown
+            if (pickups.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No scheduled pickups - Schedule one first!';
+                option.disabled = true;
+                pickupSelect.appendChild(option);
+            } else {
+                pickups.forEach(pickup => {
+                    const option = document.createElement('option');
+                    option.value = pickup.id;
+                    option.textContent = pickup.date + ' - ' + pickup.time + ' (' + pickup.location + ')';
+                    pickupSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Calculate points based on material and weight
+        function calculatePoints(material, weight) {
+            // Points calculation based on your specifications
+            const pointsRules = {
+                'plastic': { min: 15, max: 45, minWeight: 1.0, maxWeight: 3.0 },
+                'glass': { min: 20, max: 50, minWeight: 2.0, maxWeight: 5.0 },
+                'paper': { min: 10, max: 40, minWeight: 1.0, maxWeight: 4.0 },
+                'metal': { min: 20, max: 60, minWeight: 0.5, maxWeight: 2.0 }
+            };
+
+            const rule = pointsRules[material];
+            if (!rule) return 0;
+
+            // Clamp weight within the specified range
+            const clampedWeight = Math.max(rule.minWeight, Math.min(weight, rule.maxWeight));
+            
+            // Linear interpolation between min and max points
+            const weightRatio = (clampedWeight - rule.minWeight) / (rule.maxWeight - rule.minWeight);
+            const points = Math.round(rule.min + (rule.max - rule.min) * weightRatio);
+            
+            return points;
+        }
+
+        function submitLog() {
+            const pickupId = document.getElementById('pickupSelect').value;
+            const material = document.getElementById('materialSelect').value;
+            const weight = parseFloat(document.getElementById('weightInput').value);
+
+            // Validation
+            if (!pickupId) {
+                alert('Please select a scheduled pickup!');
+                return;
+            }
+            if (!material) {
+                alert('Please select a material type!');
+                return;
+            }
+            if (!weight || weight <= 0) {
+                alert('Please enter a valid weight!');
+                return;
+            }
+
+            // Calculate points
+            const earnedPoints = calculatePoints(material, weight);
+            
+            if (earnedPoints === 0) {
+                alert('Selected material does not earn points. Please check material type.');
+                return;
+            }
+
+            // Update user points
+            userPoints += earnedPoints;
+            
+            // Update all points badges
+            document.querySelectorAll('.points-badge').forEach(badge => {
+                badge.textContent = userPoints + ' pts';
+            });
+
+            // Remove the used pickup from localStorage
+            let pickups = JSON.parse(localStorage.getItem('scheduledPickups') || '[]');
+            pickups = pickups.filter(pickup => pickup.id != pickupId); // Remove the pickup that was just used
+            localStorage.setItem('scheduledPickups', JSON.stringify(pickups));
+
+            // [UPDATED] CHANGED: Update the pickup card to show next earliest pickup
+            updateNextPickupCard();
+            updatePickupNotification(); // [UPDATED] CHANGED: Also update notification
+
+            // Show success message with animation
+            alert('Log submitted successfully! +' + earnedPoints + ' points earned!\n\nMaterial: ' + material.charAt(0).toUpperCase() + material.slice(1) + '\nWeight: ' + weight + ' kg\nPoints: +' + earnedPoints);
+            
+            // Reset form
+            document.getElementById('pickupSelect').value = '';
+            document.getElementById('materialSelect').value = '';
+            document.getElementById('weightInput').value = '';
+            
+            showScreen('home');
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                alert('Image uploaded: ' + file.name);
+            }
+        }
+
+        // Settings functions
+        let currentAvatar = '👤';
+        
+        function selectAvatar(emoji) {
+            currentAvatar = emoji;
+            
+            // Update preview
+            document.getElementById('avatarPreview').textContent = emoji;
+            
+            // Update all avatar displays
+            document.querySelectorAll('.user-avatar').forEach(avatar => {
+                avatar.textContent = emoji;
+            });
+            
+            // Update active state in grid
+            document.querySelectorAll('.avatar-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.avatar === emoji) {
+                    option.classList.add('active');
+                }
+            });
+        }
+        
+        function saveSettings(event) {
+            event.preventDefault();
+            
+            const fullName = document.getElementById('settingsName').value;
+            const email = document.getElementById('settingsEmail').value;
+            const phone = document.getElementById('settingsPhone').value;
+            const address = document.getElementById('settingsAddress').value;
+            const zone = document.getElementById('settingsZone').value;
+            
+            // Extract first name from full name
+            const firstName = fullName.split(' ')[0];
+            
+            // Update current user name
+            currentUserName = firstName;
+            
+            // Update all displays
+            updateUserNameDisplay();
+            
+            alert('Settings saved successfully!');
+        }
+        
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                showScreen('splash');
+            }
+        }
+        
+        function clearAllData() {
+            if (confirm('⚠️ WARNING: This will delete ALL your data including:\n\n• All scheduled pickups\n• Redeemed rewards\n• Points history\n• Settings\n\nThis cannot be undone. Continue?')) {
+                // Clear localStorage
+                localStorage.removeItem('scheduledPickups');
+                localStorage.removeItem('redeemedRewards');
+                
+                // Reset points to default
+                userPoints = 2530;
+                document.querySelectorAll('.points-badge').forEach(badge => {
+                    badge.textContent = userPoints + ' pts';
+                });
+                
+                // Clear form fields in Submit Log
+                document.getElementById('pickupSelect').value = '';
+                document.getElementById('materialSelect').value = '';
+                document.getElementById('weightInput').value = '';
+                
+                // Remove redeemed styling from all reward cards
+                document.querySelectorAll('.reward-card').forEach(card => {
+                    card.classList.remove('redeemed');
+                    card.style.cursor = 'pointer';
+                    const overlay = card.querySelector('.redeemed-overlay');
+                    if (overlay) overlay.remove();
+                    
+                    // Re-enable clicking
+                    const rewardId = card.getAttribute('data-reward-id');
+                    const points = card.getAttribute('data-points');
+                    const brandName = card.querySelector('.reward-brand').textContent;
+                    card.onclick = function() { redeemReward(rewardId, parseInt(points), brandName); };
+                });
+                
+                alert('✅ All data cleared successfully!\n\nYou can now start fresh.');
+                showScreen('home');
+            }
+        }
+
+        // Leaflet Map initialization (OpenStreetMap - no API key needed!)
+        let map;
+        let marker;
+        
+        function initMap() {
+            try {
+                // Default location (Kuala Lumpur)
+                const defaultLat = 3.1390;
+                const defaultLng = 101.6869;
+                
+                // Create map
+                map = L.map('map').setView([defaultLat, defaultLng], 14);
+                
+                // Add OpenStreetMap tiles (free, no API key!)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(map);
+                
+                // Add draggable marker
+                marker = L.marker([defaultLat, defaultLng], {
+                    draggable: true
+                }).addTo(map);
+                
+                // Add search control (geocoding)
+                const geocoder = L.Control.Geocoder.nominatim();
+                const searchControl = L.Control.geocoder({
+                    geocoder: geocoder,
+                    defaultMarkGeocode: false
+                }).on('markgeocode', function(e) {
+                    const latlng = e.geocode.center;
+                    marker.setLatLng(latlng);
+                    map.setView(latlng, 16);
+                    document.getElementById('locationSearch').value = e.geocode.name;
+                }).addTo(map);
+                
+                // Update location on marker drag - using direct Nominatim API
+                marker.on('dragend', function(e) {
+                    const position = marker.getLatLng();
+                    const lat = position.lat;
+                    const lng = position.lng;
+                    
+                    // Show loading state
+                    document.getElementById('locationSearch').value = 'Loading address...';
+                    
+                    // Use Nominatim reverse geocoding API directly
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data.display_name) {
+                                document.getElementById('locationSearch').value = data.display_name;
+                            } else {
+                                document.getElementById('locationSearch').value = 
+                                    `Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Geocoding error:', error);
+                            document.getElementById('locationSearch').value = 
+                                `Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                        });
+                });
+                
+                // Simple search box integration
+                const searchInput = document.getElementById('locationSearch');
+                let searchTimeout;
+                
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(function() {
+                        const query = searchInput.value;
+                        if (query.length > 3) {
+                            geocoder.geocode(query, function(results) {
+                                if (results.length > 0) {
+                                    const latlng = results[0].center;
+                                    marker.setLatLng(latlng);
+                                    map.setView(latlng, 16);
+                                }
+                            });
+                        }
+                    }, 1000);
+                });
+                
+                // Try to get user's current location
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const latlng = [position.coords.latitude, position.coords.longitude];
+                            marker.setLatLng(latlng);
+                            map.setView(latlng, 16);
+                            
+                            // Reverse geocode user location using Nominatim API
+                            const lat = latlng[0];
+                            const lng = latlng[1];
+                            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data && data.display_name) {
+                                        document.getElementById('locationSearch').value = data.display_name;
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Geocoding error:', error);
+                                });
+                        },
+                        function() {
+                            console.log('Using default location');
+                        }
+                    );
+                }
+            } catch (error) {
+                console.error('Map initialization error:', error);
+                document.getElementById('map').innerHTML = 
+                    '<div style="padding: 20px; text-align: center; color: #666;">' +
+                    '<p>📍 Map temporarily unavailable</p>' +
+                    '<p style="font-size: 12px;">Please type your location in the search box above</p>' +
+                    '</div>';
+            }
+        }
+        
+        // Notifications filtering
+        function filterNotifications(category) {
+            const notifItems = document.querySelectorAll('.notif-item');
+            const filterBtns = document.querySelectorAll('.notif-filters .filter-btn');
+            
+            // Update active button
+            filterBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase() === category || 
+                    (category === 'all' && btn.textContent === 'All')) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Filter notifications
+            notifItems.forEach(item => {
+                const itemCategory = item.getAttribute('data-category');
+                
+                if (category === 'all') {
+                    item.style.display = 'flex';
+                } else if (itemCategory === category) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function filterRewards(category) {
+            const rewardCards = document.querySelectorAll('.reward-card');
+            const filterBtns = document.querySelectorAll('.rewards-filters .filter-btn');
+            
+            // Update active button
+            filterBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase() === category || 
+                    (category === 'all' && btn.textContent === 'All')) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Filter reward cards
+            rewardCards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                
+                if (category === 'all') {
+                    card.style.display = 'flex';
+                } else if (cardCategory === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Rewards redemption system
+        function redeemReward(rewardId, pointsCost, brandName) {
+            // Check if already redeemed
+            const redeemedRewards = JSON.parse(localStorage.getItem('redeemedRewards') || '[]');
+            
+            if (redeemedRewards.includes(rewardId)) {
+                alert('You have already redeemed this reward!');
+                return;
+            }
+            
+            // Check if user has enough points
+            if (userPoints < pointsCost) {
+                alert('Insufficient points! You need ' + pointsCost + ' points but only have ' + userPoints + ' points.\n\nEarn more points by submitting recycling logs!');
+                return;
+            }
+            
+            // Confirm redemption
+            if (!confirm('Redeem ' + brandName + ' coupon for ' + pointsCost + ' points?\n\nYour points will be deducted and you cannot undo this action.')) {
+                return;
+            }
+            
+            // Deduct points
+            userPoints -= pointsCost;
+            
+            // Update all points badges
+            document.querySelectorAll('.points-badge').forEach(badge => {
+                badge.textContent = userPoints + ' pts';
+            });
+            
+            // Mark as redeemed in localStorage
+            redeemedRewards.push(rewardId);
+            localStorage.setItem('redeemedRewards', JSON.stringify(redeemedRewards));
+            
+            // Apply redeemed styling
+            markCardAsRedeemed(rewardId);
+            
+            alert('✅ Congratulations! ' + brandName + ' coupon redeemed!\n\n-' + pointsCost + ' points\nRemaining: ' + userPoints + ' points');
+        }
+        
+        function markCardAsRedeemed(rewardId) {
+            const card = document.querySelector(`[data-reward-id="${rewardId}"]`);
+            if (!card) return;
+            
+            // Add redeemed class
+            card.classList.add('redeemed');
+            
+            // Remove onclick to disable clicking
+            card.onclick = null;
+            card.style.cursor = 'not-allowed';
+            
+            // Add REDEEMED overlay
+            if (!card.querySelector('.redeemed-overlay')) {
+                const overlay = document.createElement('div');
+                overlay.className = 'redeemed-overlay';
+                overlay.textContent = 'REDEEMED';
+                card.appendChild(overlay);
+            }
+        }
+        
+        // Load redeemed rewards on page load
+        function loadRedeemedRewards() {
+            const redeemedRewards = JSON.parse(localStorage.getItem('redeemedRewards') || '[]');
+            
+            // First, reset ALL cards to non-redeemed state
+            document.querySelectorAll('.reward-card').forEach(card => {
+                card.classList.remove('redeemed');
+                card.style.cursor = 'pointer';
+                
+                // Remove any existing overlay
+                const overlay = card.querySelector('.redeemed-overlay');
+                if (overlay) overlay.remove();
+                
+                // Re-enable clicking
+                const rewardId = card.getAttribute('data-reward-id');
+                const points = card.getAttribute('data-points');
+                const brandName = card.querySelector('.reward-brand')?.textContent;
+                if (rewardId && points && brandName) {
+                    card.onclick = function() { redeemReward(rewardId, parseInt(points), brandName); };
+                }
+            });
+            
+            // Then, mark only the redeemed ones
+            redeemedRewards.forEach(rewardId => {
+                markCardAsRedeemed(rewardId);
+            });
+        }
+        
+        // Call on page load
+        window.addEventListener('DOMContentLoaded', loadRedeemedRewards);
+
+        // Rewards claiming with animation
+        let userPoints = 2530;
+        let rewardsClaimed = false;
+
+        function claimRewards() {
+            if (rewardsClaimed) return;
+            
+            const banner = document.getElementById('rewardsBanner');
+            const rewardsText = document.getElementById('rewardsText');
+            const pointsBadges = document.querySelectorAll('.points-badge');
+            
+            // Generate random points between 10-100
+            const randomPoints = Math.floor(Math.random() * 91) + 10;
+            userPoints += randomPoints;
+            
+            // Add animation class
+            banner.classList.add('rewards-claimed');
+            
+            // Update banner text
+            rewardsText.innerHTML = `<strong>Congratulations!</strong><br>You have received <strong>${randomPoints} points!</strong>`;
+            
+            // Update all points displays with animation
+            pointsBadges.forEach(badge => {
+                badge.style.animation = 'pointsPulse 0.5s ease';
+                setTimeout(() => {
+                    badge.textContent = userPoints + ' pts';
+                    setTimeout(() => {
+                        badge.style.animation = '';
+                    }, 500);
+                }, 100);
+            });
+            
+            rewardsClaimed = true;
+            
+            // Reset after 3 seconds
+            setTimeout(() => {
+                banner.classList.remove('rewards-claimed');
+                rewardsText.innerHTML = 'Tap to collect your points!';
+                rewardsClaimed = false;
+            }, 3000);
+        }
+
+        // Interactive time slot selection
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('time-slot')) {
+                document.querySelectorAll('.time-slot').forEach(slot => {
+                    slot.classList.remove('active');
+                });
+                e.target.classList.add('active');
+            }
+
+            // [UPDATED] REMOVED: calendar-day click handler - now handled by selectDate() function
+
+            if (e.target.classList.contains('filter-btn')) {
+                const parent = e.target.parentElement;
+                parent.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                e.target.classList.add('active');
+            }
+        });
+
+        // Prevent double-tap zoom on mobile
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // Keyboard shortcuts for quick navigation (for presentation)
+        document.addEventListener('keydown', function(e) {
+            // Don't trigger shortcuts when typing in input fields
+            const activeElement = document.activeElement;
+            const isTyping = activeElement && (
+                activeElement.tagName === 'INPUT' || 
+                activeElement.tagName === 'TEXTAREA' || 
+                activeElement.tagName === 'SELECT' ||
+                activeElement.isContentEditable
+            );
+            
+            // Skip if user is typing
+            if (isTyping) {
+                return;
+            }
+            
+            // Press 1-9 to jump to screens quickly
+            const screens = {
+                '1': 'splash',
+                '2': 'signup',
+                '3': 'login',
+                '4': 'home',
+                '5': 'schedule',
+                '6': 'submit',
+                '7': 'notifications',
+                '8': 'rewards',
+                '9': 'settings'
+            };
+            
+            if (screens[e.key]) {
+                showScreen(screens[e.key]);
+            }
+            
+            // Press H to go to home
+            if (e.key === 'h' || e.key === 'H') {
+                showScreen('home');
+            }
+        });
+
+        // Show keyboard shortcuts hint on load (only once)
+        if (!sessionStorage.getItem('shortcutsShown')) {
+            console.log('%c🚀 Keyboard Shortcuts for Presentation:', 'font-size: 16px; font-weight: bold; color: #8BC34A;');
+            console.log('%c1: Splash | 2: Signup | 3: Login | 4: Home', 'font-size: 12px; color: #666;');
+            console.log('%c5: Schedule | 6: Submit | 7: Notifications | 8: Rewards | 9: Settings', 'font-size: 12px; color: #666;');
+            console.log('%cH: Jump to Home', 'font-size: 12px; color: #666;');
+            sessionStorage.setItem('shortcutsShown', 'true');
+        }
+    </script>
+</body>
+</html>
